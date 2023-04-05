@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Wishes Form
  * Description:       Wishes Form is created by Zain Hassan.
- * Version:           1.0.0
+ * Version:           1.0.3
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Zain Hassan
@@ -16,12 +16,89 @@ if(!defined('ABSPATH')){
     exit;
 }
 
+//define('WP_MEMORY_LIMIT', '1024M');
 
 add_action( 'init', 'create_post_type_wishes' );
 add_action( 'gform_after_submission', 'save_post_data', 10, 2 );
 add_action( 'elementor/elements/categories_registered', 'custom_category_elementor_wishes' );
 add_action( 'elementor/widgets/register', 'register_wishes_elementor_widgets' );
 
+add_action('wp_ajax_all_posts_data', 'all_posts_data_callback');
+add_action('wp_ajax_nopriv_all_posts_data', 'all_posts_data_callback');
+
+
+function all_posts_data_callback(){
+  $posts_by_category = array();
+	$args = array(
+		'post_type' => 'wishes_submission',
+		'posts_per_page' => -1,
+    'meta_query' => array(
+      'relation' => 'OR',
+      array(
+        'key' => '_thumbnail_id',
+        'compare' => 'EXISTS'
+      ),
+      array(
+        'key' => '_thumbnail_id',
+        'compare' => 'NOT EXISTS',
+        'value' => '',
+        'type' => 'STRING'
+      )
+    ),
+    'orderby' => array(
+      'meta_value_num' => 'ASC'
+    )
+	);
+
+  $perpage = intval($_POST['perpage']);
+  $totalpages = intval($_POST['totalpages']);
+  $wordsCount = intval($_POST['wordsCount']);
+	$counter = 0;
+  $curPage = 1;
+	$query = new WP_Query($args);
+	$posts = array();
+  $post_data = [];
+	if ($query->have_posts()) { 
+		while ($query->have_posts()) {
+			$query->the_post();
+			$post_id = get_the_ID();
+			$post_title = get_the_title();
+			$post_content = get_the_content();
+
+      $words = explode(' ', $post_content);
+      $limit = $wordsCount; 
+      $excerpt = implode(' ', array_slice($words, 0, $limit)); 
+      $excerpt .= '...'; 
+      $read_more = '<a onClick=updateFull(event) href="' . get_permalink() . '">Read more</a>';
+      $excerpt .= $read_more;
+
+			$post_image = get_the_post_thumbnail_url($post_id, 'full');
+	
+			$post_data[] = array(
+				'title' => $post_title,
+				'content' => $post_content,
+				'excerpt' => $excerpt,
+				'image' => $post_image
+			);
+
+      if( $counter < $perpage - 1 ){
+        $counter++;
+      }else{
+        array_push($posts_by_category, $post_data);
+        $post_data = [];
+        $curPage++;
+        $counter = 0;
+      }
+		}
+	
+		wp_reset_postdata();
+	
+		// Do something with the $posts array
+	}
+
+	echo json_encode($posts_by_category);
+	die();
+}
 
 // Define custom post type function
 function create_post_type_wishes() {

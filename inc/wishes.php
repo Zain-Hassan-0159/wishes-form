@@ -19,18 +19,7 @@
  */
 class wishes_widget_elementore  extends \Elementor\Widget_Base {
 	
-
-	public function get_style_depends() {
-
-		// wp_register_style( 'wishes-style', plugins_url( 'assets/css/style.css', __FILE__ ) );
-
-		// return [
-		// 	'wishes-style',
-		// ];
-
-	}
 	
-
 	/**
 	 * Get widget name.
 	 *
@@ -135,7 +124,7 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 			[
 				'label'     => esc_html__('Posts Per Page', 'wishes-form'),
 				'type'      => \Elementor\Controls_Manager::NUMBER,
-				'min'       => 1,
+				'min'       => -1,
 				'default'       => 4,
 				'step'      => 1,
 			]
@@ -150,9 +139,55 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 				'options' => [
 					'one' => esc_html__( 'Layout One', 'wishes-form' ),
 					'two'  => esc_html__( 'Layout Two', 'wishes-form' ),
+					'three'  => esc_html__( 'Layout Three', 'wishes-form' ),
 				]
 			]
 		);
+
+		$this->add_responsive_control(
+			'total_columns',
+			[
+				'type' => \Elementor\Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Total Columns', 'wishes-form' ),
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+				],
+				'devices' => [ 'desktop', 'tablet', 'mobile' ],
+				'desktop_default' => [
+					'size' => 4,
+					'unit' => 'px',
+				],
+				'tablet_default' => [
+					'size' => 3,
+					'unit' => 'px',
+				],
+				'mobile_default' => [
+					'size' => 2,
+					'unit' => 'px',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .wishes' => 'columns: {{SIZE}};'
+				],
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
+
+		$this->add_control(
+			'words_limit',
+			[
+				'label' => esc_html__( 'Words Limit', 'wishes-form' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'min' => 15,
+				'step' => 1,
+				'default' => 25
+			]
+		);
+
 		
 		$this->end_controls_section();
 
@@ -197,6 +232,18 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 			]
 		);
 		
+        $this->add_group_control(
+			\Elementor\Group_Control_Typography::get_type(),
+			[
+				'name' => 'from_typography_3',
+                'label' => __( 'From User Typography', 'wishes-form' ),
+				'selector' => '{{WRAPPER}} .wishes .user',
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
+		
 		$this->add_control(
 			'primary_color',
 			[
@@ -233,6 +280,21 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 		);
 		
 		$this->add_control(
+			'card_bg_color3',
+			[
+				'label' => esc_html__( 'Card Background Color', 'custom-location' ),
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'default' => '#f5f5f5',
+				'selectors' => [
+					'{{WRAPPER}} .wishes .wish' => 'background-color: {{VALUE}};'
+				],
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
+		
+		$this->add_control(
 			'card_text_color',
 			[
 				'label' => esc_html__( 'Card Text Color', 'custom-location' ),
@@ -246,6 +308,22 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 				],
 			]
 		);
+		
+		$this->add_control(
+			'card_text_color3',
+			[
+				'label' => esc_html__( 'Card Text Color', 'custom-location' ),
+				'type' => \Elementor\Controls_Manager::COLOR,
+				'default' => '#0F0F10',
+				'selectors' => [
+					'{{WRAPPER}} .wishes p' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .wishes .user' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
 
 		$this->add_group_control(
 			\Elementor\Group_Control_Box_Shadow::get_type(),
@@ -254,6 +332,50 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 				'selector' => '{{WRAPPER}} .wishes .div-left',
 				'condition' => [
 					'select_layout' => 'one',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'box_shadow3',
+				'selector' => '{{WRAPPER}} .wishes .wish',
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'border_Radius',
+			[
+				'type' => \Elementor\Controls_Manager::SLIDER,
+				'label' => esc_html__( 'Spacing', 'textdomain' ),
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'devices' => [ 'desktop', 'tablet', 'mobile' ],
+				'desktop_default' => [
+					'size' => 8,
+					'unit' => 'px',
+				],
+				'tablet_default' => [
+					'size' => 4,
+					'unit' => 'px',
+				],
+				'mobile_default' => [
+					'size' => 4,
+					'unit' => 'px',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .wishes .wish' => 'border-radius: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'select_layout' => 'three',
 				],
 			]
 		);
@@ -274,6 +396,7 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$wordsCount = $settings['words_limit'];
 
 		// echo "<pre>";
 		// var_dump($settings['posts_include_terms']);
@@ -416,8 +539,17 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 						<h4><?php echo get_the_title(); ?></h4>
 					</div>
 					<div class="div-left">
-						<p>
-							<?php echo get_the_content(); ?>
+						<p data-fullcontent="<?php echo get_the_content(); ?>">
+							<?php
+								$content = get_the_content(); // get the content of the post or page
+								$words = explode(' ', $content); // split the content into an array of words
+								$limit = $wordsCount; // set the limit to 50 words (you can change this to your desired limit)
+								$excerpt = implode(' ', array_slice($words, 0, $limit)); // join the first 50 words back together
+								$excerpt .= '...'; // add an ellipsis to the end of the excerpt
+								$read_more = '<a onClick=updateFull(event) href="' . get_permalink() . '">Read more</a>'; // create the "Read more" link
+								$excerpt .= $read_more; // concatenate the "Read more" link to the excerpt
+								echo $excerpt; // output the excerpt
+							?>
 						</p>
 					</div>
 				</div>
@@ -431,7 +563,10 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 				endif; ?>
 			</div>
 			<?php
-		}else{
+		}
+		else
+		if($settings['select_layout'] === 'two')
+		{
 			?>
 			<style>
 				.wishes .wish{
@@ -520,8 +655,17 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 								?>
 							</div>
 							<div class="right">
-								<p>
-									<?php echo get_the_content(); ?>
+								<p data-fullcontent="<?php echo get_the_content(); ?>">
+								<?php
+									$content = get_the_content(); // get the content of the post or page
+									$words = explode(' ', $content); // split the content into an array of words
+									$limit = $wordsCount; // set the limit to 50 words (you can change this to your desired limit)
+									$excerpt = implode(' ', array_slice($words, 0, $limit)); // join the first 50 words back together
+									$excerpt .= '...'; // add an ellipsis to the end of the excerpt
+									$read_more = '<a onClick=updateFull(event) href="' . get_permalink() . '">Read more</a>'; // create the "Read more" link
+									$excerpt .= $read_more; // concatenate the "Read more" link to the excerpt
+									echo $excerpt; // output the excerpt
+								?>
 								</p>
 								<span class="user">
 									<?php echo 'From ' . get_the_title(); ?>
@@ -539,6 +683,224 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 			</div>
 			<?php
 		}
+		else
+		if($settings['select_layout'] === 'three')
+		{
+			?>
+			<style>
+
+				.wishes{
+					margin: 20px auto;
+					columns: 4;
+					gap: 15px;
+					
+				}
+
+				.wishes .wish{
+					width: 100%;
+					margin: 0 0 20px;
+					background-color: whitesmoke;
+					overflow: hidden;
+					break-inside: avoid;
+					border-radius: 20px;
+					text-align: center;
+				}
+
+				.wishes .wish img{
+					max-width: 100%;
+				}
+
+				.wishes .wish p{
+					font-size: 16px;
+					font-weight: bold;
+					margin: 20px;
+					word-wrap: break-word;
+					text-align: left;
+				}
+
+				.wishes .wish p a{
+					text-decoration: underline;
+				}
+
+				.wishes .wish h6{
+					font-size: 16px;
+					font-weight: normal;
+					margin: 20px;
+					text-align: left;
+				}
+
+				/* Styling for pagination */
+				.pagination {
+					display: flex;
+					justify-content: center;
+					margin-top: 20px;
+				}
+
+				.pagination .page-numbers {
+				padding: 10px;
+				margin: 0 5px;
+				border: 1px solid black;
+				color: black;
+				}
+
+				.pagination .page-numbers:hover {
+				background-color: black;
+				color: white;
+				}
+
+				.pagination .current {
+				background-color: black;
+				color: white;
+				border: none;
+				}
+
+				@media (max-width: 668px){
+
+				}
+				@media (max-width: 468px){
+
+				}
+			</style>
+			<div class="wishes_wrapper">
+				<?php
+				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+				$the_query = new WP_Query( 
+					array( 
+						'posts_per_page' => $settings['post_per_page'], 
+						'post_type' => 'wishes_submission',
+						'paged' => $paged,
+						'meta_query' => array(
+							'relation' => 'OR',
+							array(
+								'key' => '_thumbnail_id',
+								'compare' => 'EXISTS'
+							),
+							array(
+								'key' => '_thumbnail_id',
+								'compare' => 'NOT EXISTS',
+								'value' => '',
+								'type' => 'STRING'
+							)
+						),
+						'orderby' => array(
+							'meta_value_num' => 'ASC'
+						)
+					) 
+				);
+				if ( $the_query->have_posts() ) :
+					?>
+					<div class="wishes" data-perpage="<?php echo $settings['post_per_page']; ?>" data-totalpages="<?php echo $the_query->max_num_pages; ?>" >
+						<?php
+						while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
+							<div class="wish">
+									<p data-fullcontent="<?php echo get_the_content(); ?>">
+									<?php
+										$content = get_the_content(); // get the content of the post or page
+										$words = explode(' ', $content); // split the content into an array of words
+										$limit = $wordsCount; // set the limit to 50 words (you can change this to your desired limit)
+										$excerpt = implode(' ', array_slice($words, 0, $limit)); // join the first 50 words back together
+										$excerpt .= '...'; // add an ellipsis to the end of the excerpt
+										$read_more = '<a onClick=updateFull(event) href="' . get_permalink() . '">Read more</a>'; // create the "Read more" link
+										$excerpt .= $read_more; // concatenate the "Read more" link to the excerpt
+										echo $excerpt; // output the excerpt
+									?>
+									</p>
+								<?php 
+									if ( has_post_thumbnail() ) {
+										$thumbnail_id = get_post_thumbnail_id();
+										$thumbnail_url = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+										echo '<img src="' . esc_url( $thumbnail_url[0] ) . '" />';
+									}
+									$title = get_the_title();
+									if($title !== ''){
+										?>
+										<h6 class="user">
+											<?php echo 'From ' . get_the_title(); ?>
+										</h6>
+										<?php
+									}
+								?>
+							</div>
+						<?php endwhile; ?>
+					</div>
+					<div class="pagination">
+						<a class="previous page-numbers" href="#">« Previous</a>					
+						<a class="next page-numbers" href="#">Next »</a>					
+					</div>
+					<?php wp_reset_postdata();
+				else :
+					echo '<p>No wishes found.</p>';
+				endif; ?>
+			</div>
+			<script>
+				var pageNo = 0;
+				jQuery(".pagination a.page-numbers").click(function(event){
+					event.preventDefault();
+					let parts = pageNo;
+					let posts = window.posts;
+					let HTML_wish = '';
+					let pageNumber = parts;
+					if(this.classList.contains('next')){
+						if(posts.hasOwnProperty(pageNo + 1)){
+							pageNo++;
+							parts = pageNo;
+						}
+					}else{
+						if(posts.hasOwnProperty(pageNo - 1)){
+							pageNo--;
+							parts = pageNo;
+						}
+					}
+
+					pageNumber = parts; 
+					let dataperpage = parseInt(jQuery(".wishes").data("perpage"));
+					let totalpages = parseInt(jQuery(".wishes").data("totalpages"));
+					let currentPosts = pageNumber * dataperpage;
+
+					if(totalpages === 1){
+						return;
+					}
+					
+					for(let i=0; i < dataperpage; i++){
+						HTML_wish += `
+						<div class="wish">
+							<p data-fullcontent="${posts[pageNumber][i]['content']}" >${posts[pageNumber][i]['excerpt']}</p>
+							${
+								(posts[pageNumber][i]['image'] !== false) ?
+									`<img decoding="async" src="${posts[pageNumber][i]['image']}">` :
+									''
+							}
+																	
+							<h6 class="user">From ${posts[pageNumber][i]['title']}</h6>
+						</div>
+						`;
+					}
+
+					jQuery('.wishes').html(HTML_wish);
+				})
+
+				jQuery.ajax({
+					url: '<?php echo admin_url('admin-ajax.php'); ?>',
+					type: 'post',
+					data: { action: 'all_posts_data', perpage: '<?php echo $settings['post_per_page']; ?>', totalpages: '<?php echo $the_query->max_num_pages; ?>', wordsCount: '<?php echo $wordsCount; ?>' },
+					success: function(data) {
+						window.posts = JSON.parse(data);
+					}
+				});
+
+			</script>
+			<?php
+		}
+		?>
+		<script>
+			function updateFull(event){
+				event.preventDefault();
+				let parent = jQuery(event.target).parent();
+				let value = parent.data('fullcontent');
+				parent.html(value);
+			}
+		</script>
+		<?php
 	}
 
 
