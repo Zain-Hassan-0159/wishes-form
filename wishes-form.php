@@ -46,7 +46,7 @@ function all_posts_data_callback(){
       )
     ),
     'orderby' => array(
-      'meta_value_num' => 'ASC'
+      $_POST['orderBy'] => $_POST['order_direc']
     )
 	);
 

@@ -189,6 +189,39 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 		);
 
 		
+		$this->add_control(
+			'order_by',
+			[
+				'label' => esc_html__( 'Order by Image', 'wishes-form' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'wishes-form' ),
+				'label_off' => esc_html__( 'No', 'wishes-form' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+				'description' => 'If Not Selected Then it will be ordered by the Date',
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
+		
+		$this->add_control(
+			'order_direction',
+			[
+				'label' => esc_html__( 'Order', 'wishes-form' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'ASC', 'wishes-form' ),
+				'label_off' => esc_html__( 'DESC', 'wishes-form' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+				'description' => 'If Selected then It will be Descending otherwise Ascending',
+				'condition' => [
+					'select_layout' => 'three',
+				],
+			]
+		);
+
+		
 		$this->end_controls_section();
 
         $this->start_controls_section(
@@ -351,7 +384,7 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 			'border_Radius',
 			[
 				'type' => \Elementor\Controls_Manager::SLIDER,
-				'label' => esc_html__( 'Spacing', 'textdomain' ),
+				'label' => esc_html__( 'Spacing', 'wishes-form' ),
 				'range' => [
 					'px' => [
 						'min' => 0,
@@ -764,6 +797,8 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 			<div class="wishes_wrapper">
 				<?php
 				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+				$order_key = $settings['order_by'] === 'yes' ? 'meta_value_num' : 'date';
+				$order_direc = $settings['order_direction'] === 'yes' ? 'DESC' : 'ASC';
 				$the_query = new WP_Query( 
 					array( 
 						'posts_per_page' => $settings['post_per_page'], 
@@ -783,7 +818,7 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 							)
 						),
 						'orderby' => array(
-							'meta_value_num' => 'ASC'
+							$order_key => $order_direc
 						)
 					) 
 				);
@@ -882,7 +917,7 @@ class wishes_widget_elementore  extends \Elementor\Widget_Base {
 				jQuery.ajax({
 					url: '<?php echo admin_url('admin-ajax.php'); ?>',
 					type: 'post',
-					data: { action: 'all_posts_data', perpage: '<?php echo $settings['post_per_page']; ?>', totalpages: '<?php echo $the_query->max_num_pages; ?>', wordsCount: '<?php echo $wordsCount; ?>' },
+					data: { action: 'all_posts_data', perpage: '<?php echo $settings['post_per_page']; ?>', totalpages: '<?php echo $the_query->max_num_pages; ?>', wordsCount: '<?php echo $wordsCount; ?>', orderBy: '<?php echo $order_key; ?>', order_direc: '<?php echo $order_direc; ?>' },
 					success: function(data) {
 						window.posts = JSON.parse(data);
 					}
